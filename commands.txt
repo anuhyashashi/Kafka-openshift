@@ -1,0 +1,31 @@
+![alt text](image.png)
+
+oc exec -it kafka-6f7dd4747d-866rg -- /bin/bash
+
+kafka-topics.sh --create   --topic test-topic   --bootstrap-server localhost:9092   --r
+eplication-factor 1   --partitions 1
+
+/opt/bitnami/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic test-topic
+
+kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test-topic --from-beginning
+
+
+# Inside the Kafka pod
+/opt/bitnami/kafka/bin/kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic test-topic \
+  --from-beginning
+
+
+changes:-
+
+mvn clean package
+build the docker image (linux/amd64-openshift compatible)
+apply changes to yaml
+rollout
+run pods
+
+docker buildx build --platform linux/amd64   -t anuhyashashi/kafka-consumer:v14   --push kafka-consumer/
+docker buildx imagetools inspect anuhyashashi/kafka-consumer:v14
+oc apply -f kafka-consumer-deployment.yaml
+oc rollout restart deployment kafka-consumer
